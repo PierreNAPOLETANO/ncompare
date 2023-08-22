@@ -281,14 +281,8 @@ def _print_var_properties_side_by_side(out,
             out.side_by_side(f"{attr_a_key if attr_a_key else attr_b_key}:", attr_a, attr_b, highlight_diff=True)
 
     # Scale Factor
-    if getattr(v_a.variable, 'scale_factor', None):
-        sf_a = v_a.variable.scale_factor
-    else:
-        sf_a = ' '
-    if getattr(v_b.variable, 'scale_factor', None):
-        sf_b = v_b.variable.scale_factor
-    else:
-        sf_b = ' '
+    sf_a = v_a.variable.scale_factor if getattr(v_a.variable, 'scale_factor', None) else ' '
+    sf_b = v_b.variable.scale_factor if getattr(v_b.variable, 'scale_factor', None) else ' '
     if (sf_a != " ") or (sf_b != " "):
         out.side_by_side("sf:", str(sf_a), str(sf_b), highlight_diff=True)
 
@@ -317,15 +311,11 @@ def _var_properties(dataset: netCDF4.Dataset,
         any other attributes for this variable
     """
     if varname:
-        if groupname:
-            the_variable = dataset.groups[groupname].variables[varname]
-        else:
-            the_variable = dataset.variables[varname]
+        the_variable = dataset.groups[groupname].variables[varname] if groupname else dataset.variables[varname]
         v_dtype = str(the_variable.dtype)
         v_shape = str(the_variable.shape).strip()
         v_chunking = str(the_variable.chunking()).strip()
-        v_attributes = {name: getattr(the_variable, name)
-                        for name in the_variable.ncattrs()}
+        v_attributes = {name: getattr(the_variable, name) for name in the_variable.ncattrs()}
     else:
         the_variable = None
         v_dtype = ""
@@ -407,14 +397,12 @@ def _get_vars(nc_filepath: Path,
 
     return grp_varlist
 
-def _get_groups(nc_filepath: Path,
-                ) -> list:
+def _get_groups(nc_filepath: Path) -> list:
     with netCDF4.Dataset(nc_filepath) as dataset:
         groups_list = list(dataset.groups.keys())
     return groups_list
 
-def _get_dims(nc_filepath: Path,
-              ) -> list:
+def _get_dims(nc_filepath: Path) -> list:
 
     def __get_dim_list(decode_times=True):
         with xr.open_dataset(nc_filepath, decode_times=decode_times) as dataset:

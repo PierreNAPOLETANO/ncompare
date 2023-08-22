@@ -46,10 +46,7 @@ class Outputter:
         """
         # Parse the print history option.
         self._keep_print_history = keep_print_history
-        if self._keep_print_history:
-            self._line_history = []
-        else:
-            self._line_history = None
+        self._line_history = [] if self._keep_print_history else None
 
         if no_color:
             # Replace colorized styles with blank strings.
@@ -94,10 +91,7 @@ class Outputter:
             Additional keyword arguments that are passed to the standard Python print() function.
         """
         # Decide if colors are to be used or not.
-        if colors is False:
-            text_to_print = self._make_normal(string)
-        else:
-            text_to_print = string
+        text_to_print = self._make_normal(string) if colors is False else string
 
         # Execute the print command.
         print(text_to_print, **print_args)
@@ -200,10 +194,7 @@ class Outputter:
         s_union = set_a.union(set_b)
 
         # Are these list contents the same?
-        if ignore_order:
-            contents_are_same = set_a == set_b
-        else:
-            contents_are_same = list_a == list_b
+        contents_are_same = set_a == set_b if ignore_order else list_a == list_b
 
         # Display the comparison result
         if contents_are_same:
